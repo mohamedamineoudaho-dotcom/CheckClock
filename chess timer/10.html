@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Two 10-Minute Timers</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2196f3">
+  <Script>
+    if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("service-worker.js")
+              .then(() => console.log("✅ Service Worker Registered"))
+              .catch(err => console.error("Service Worker failed", err));
+    }
+    </Script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      text-align: center;
+      padding-top: 50px;
+    }
+    .timer-container {
+      background-color: #fff;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      padding: 30px;
+      margin: 20px auto;
+      width: 300px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .timer {
+      font-size: 48px;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    button {
+      font-size: 18px;
+      padding: 10px 20px;
+      margin: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>mode rapid</h1>
+
+  <!-- Timer 1 -->
+  <div class="timer-container">
+    <h2>white</h2>
+    <div id="timer1" class="timer">10:00</div>
+    <button onclick="startTimer(1)">Start</button>
+    <button onclick="stopTimer(1)">Stop</button>
+  </div>
+
+  <!-- Timer 2 -->
+  <div class="timer-container">
+    <h2>black</h2>
+    <div id="timer2" class="timer">10:00</div>
+    <button onclick="startTimer(2)">Start</button>
+    <button onclick="stopTimer(2)">Stop</button>
+  </div>
+
+  <script>
+    const timers = {
+      1: {
+        timeLeft: 10 * 60,
+        intervalId: null,
+        elementId: 'timer1'
+      },
+      2: {
+        timeLeft: 10 * 60,
+        intervalId: null,
+        elementId: 'timer2'
+      }
+    };
+
+    function updateTimerDisplay(timerNumber) {
+      const timer = timers[timerNumber];
+      const minutes = String(Math.floor(timer.timeLeft / 60)).padStart(2, '0');
+      const seconds = String(timer.timeLeft % 60).padStart(2, '0');
+      document.getElementById(timer.elementId).textContent = `${minutes}:${seconds}`;
+    }
+
+    function startTimer(timerNumber) {
+      const timer = timers[timerNumber];
+      if (timer.intervalId) return; // Already running
+
+      timer.intervalId = setInterval(() => {
+        if (timer.timeLeft > 0) {
+          timer.timeLeft--;
+          updateTimerDisplay(timerNumber);
+        } else {
+          clearInterval(timer.intervalId);
+          timer.intervalId = null;
+          alert(`Time is up on Timer ${timerNumber}!`);
+        }
+      }, 1000);
+    }
+
+    function stopTimer(timerNumber) {
+      const timer = timers[timerNumber];
+      clearInterval(timer.intervalId);
+      timer.intervalId = null;
+    }
+
+    // Initial display
+    updateTimerDisplay(1);
+    updateTimerDisplay(2);
+  </script>
+
+</body>
+</html>
